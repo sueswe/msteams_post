@@ -1,7 +1,5 @@
 #!/usr/bin/ruby
 
-# https://github.com/pedrofurtado/microsoft_teams_incoming_webhook_ruby
-
 require 'microsoft_teams_incoming_webhook_ruby'
 require 'colorize'
 require 'optparse'
@@ -11,7 +9,6 @@ require 'erb'
 $stdout.sync = true 
 $stdin.sync = true
 
-
 # config-file where to find the web-URL (secret)
 class Account
   def self.configuration
@@ -19,22 +16,20 @@ class Account
   end
 end
 
-
 class Createconfig
   def self.sceleton
     if File.exists?('msteams_connector.yaml')
-      puts "ERROR: configfile already exists."
+      puts "ERROR: configfile already exists.".red
       exit 1
     else
       File.open("msteams_connector.yaml", "a") do |line|
         line.puts "channelname:"
-        line.puts "  name: \"the name\""
-        line.puts "  secret_uri: \"channel-URI\""
+        line.puts "  name: \"an optional name or description\""
+        line.puts "  secret_uri: \"the secret channel-URI from the incoming-webhook\""
       end
     end
   end
 end
-
 
 myname = File.basename(__FILE__)
 options = {}
@@ -66,7 +61,7 @@ optparse.parse!
 
 if options[:newconfig] == true
   Createconfig.sceleton
-  puts "done."
+  puts "done.".green
   exit 0
 end
 
@@ -105,4 +100,4 @@ message = MicrosoftTeamsIncomingWebhookRuby::Message.new do |m|
     m.text = options[:message].to_s
   end
   
-puts "message.send"
+message.send
