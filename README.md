@@ -2,6 +2,8 @@
 
 ### Installation
 
+Get ruby up and running, for example on debian-based systems:
+
 ~~~bash
 apt-get install ruby ruby-bundler rake
 ~~~
