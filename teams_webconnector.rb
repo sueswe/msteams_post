@@ -9,20 +9,23 @@ require 'erb'
 $stdout.sync = true 
 $stdin.sync = true
 
+CONFIG = 'msteams_connector.yaml'
+
 # config-file where to find the web-URL (secret)
 class Account
   def self.configuration
-    YAML.safe_load(ERB.new(File.read('msteams_connector.yaml')).result)
+    YAML.safe_load(ERB.new(File.read(CONFIG)).result)
   end
 end
 
 class Createconfig
   def self.sceleton
-    if File.exists?('msteams_connector.yaml')
-      puts "ERROR: configfile already exists.".red
+    if File.exists?(CONFIG)
+      puts "Sorry: a configfile already exists in your current directory.".red
+      puts "I won't mess up your files."
       exit 1
     else
-      File.open("msteams_connector.yaml", "a") do |line|
+      File.open(CONFIG, "a") do |line|
         line.puts "channelname:"
         line.puts "  name: \"an optional name or description\""
         line.puts "  secret_uri: \"the secret channel-URI from the incoming-webhook\""
@@ -42,7 +45,7 @@ optparse = OptionParser.new do |opts|
   end
 
   options[:list] = nil
-  opts.on('-l','--list','list configured channels.') do
+  opts.on('-l','--list','list your configured channels.') do
     options[:list] = true
   end
 
@@ -62,12 +65,13 @@ optparse.parse!
 if options[:newconfig] == true
   Createconfig.sceleton
   puts "done.".green
+  puts "#{CONFIG} written."
   exit 0
 end
 
 if options[:list] == true
   puts "Channel-list:"
-  config_options = YAML.load_file("msteams_connector.yaml")
+  config_options = YAML.load_file(CONFIG)
   config_options.each do |key, value|
     puts " -> #{key}"
   end
@@ -94,7 +98,7 @@ end
 
 
 uri = Account.configuration[chat]['secret_uri']
-puts "Fireing up, this may take a few seconds ..."
+puts "Fireing up, this may take a few seconds ...".yellow
 message = MicrosoftTeamsIncomingWebhookRuby::Message.new do |m|
     m.url = uri
     m.text = options[:message].to_s
