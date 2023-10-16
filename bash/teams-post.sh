@@ -13,16 +13,22 @@ if [[ "${WEBHOOK_URL}" == "" ]]; then
   echo "No webhook_url specified."
   exit 1
 fi
-TITLE=$2
+shift
+
+TITLE=$1
 if [[ "${TITLE}" == "" ]]; then
   echo "No title specified."
   exit 1
 fi
-COLOR=$3
+shift
+
+COLOR=$1
 if [[ "${COLOR}" == "" ]]; then
   echo "No color specified...setting a default."
   echo COLOR="ff0000"
 fi
+shift
+
 TEXT=$*
 if [[ "${TEXT}" == "" ]]; then
   echo "No text specified."

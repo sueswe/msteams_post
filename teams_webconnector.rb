@@ -103,5 +103,10 @@ message = MicrosoftTeamsIncomingWebhookRuby::Message.new do |m|
     m.url = uri
     m.text = options[:message].to_s
   end
-  
-message.send
+
+begin
+  message.send  
+rescue => exception
+  puts "#{exception} : something went wrong"
+end
+
